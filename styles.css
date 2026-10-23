@@ -44,3 +44,7 @@ body{background:#141617}header{height:74px;border:0;padding:0 38px;position:rela
 .pro-controller .pro-body{fill:url(#pro-shell)}.pro-controller #pro-shell stop:nth-child(1){stop-color:color-mix(in srgb,var(--pro-body,#393d3f) 70%,white 30%)}.pro-controller #pro-shell stop:nth-child(2){stop-color:var(--pro-body,#393d3f)}.pro-controller #pro-shell stop:nth-child(3){stop-color:color-mix(in srgb,var(--pro-body,#393d3f) 85%,black 15%)}.pro-controller #pro-shell stop:nth-child(4){stop-color:color-mix(in srgb,var(--pro-body,#393d3f) 65%,black 35%)}
 /* Official 2026 Zelda 40th Joy-Con 2 finish, based on Nintendo front photos. */
 .joycon2.zelda40-edition .left-shell{fill:var(--left)}.joycon2.zelda40-edition .right-shell{fill:var(--right)}.joycon2.zelda40-edition .stick-well[cx="145"],.joycon2.zelda40-edition .stick-well[cx="355"]{fill:#b9a55d}.joycon2.zelda40-edition path.rail{fill:#33433c}
+/* Photo-inspired pearlescent Zelda finish: only the paint highlight moves. */
+.zelda40-edition .zelda40-foil-sheen{animation:zelda40-foil-pass 14s ease-in-out infinite;pointer-events:none}.joycon2.zelda40-edition .stick-well[cx="145"],.joycon2.zelda40-edition .stick-well[cx="355"]{fill:url(#zelda40-goldfoil)}
+@keyframes zelda40-foil-pass{0%{transform:translateX(0)}100%{transform:translateX(680px)}}
+@media(prefers-reduced-motion:reduce){.zelda40-edition .zelda40-foil-sheen{animation:none;transform:translateX(310px)}}
