@@ -6,7 +6,6 @@ function parseDS4(reportId,data){let offset;if(reportId===1&&data.byteLength>=63
 function separateJoycons(a,b){return !!(a&&b&&a.index!==b.index&&/joy.con/i.test(a.id)&&/joy.con/i.test(b.id))}
 function axisSource(a,b,separate){return {right:separate?b:a,x:separate?'prx':'rx',y:separate?'pry':'ry'}}
 function filterGyro(gyro,deadzone=1){const threshold=Number.isFinite(Number(deadzone))?Math.max(0,Number(deadzone)):1;return Math.hypot(...gyro)<threshold?[0,0,0]:Array.from(gyro)}
-function accelAngles(accel){const [x,y,z]=accel;return {horizontal:Math.atan2(-x,Math.hypot(y,z))*180/Math.PI,vertical:Math.atan2(y,Math.hypot(x,z))*180/Math.PI}}
-function motionDirection(accel,neutral,threshold=3){const angles=accelAngles(accel);const horizontal=angles.horizontal-neutral.horizontal,vertical=angles.vertical-neutral.vertical;return {horizontal,vertical,active:Math.hypot(horizontal,vertical)>=threshold,angle:Math.atan2(horizontal,-vertical)*180/Math.PI}}
-const api={accelAngles,motionDirection,filterGyro,crc32,ds4BluetoothOutput,parseDS4,separateJoycons,axisSource};if(typeof module==='object'&&module.exports)module.exports=api;root.SignalInput=api;
+function gyroDirections(gyro,deadzone=1,invertHorizontal=false,invertVertical=false){const filtered=filterGyro(gyro,deadzone);const horizontal=filtered[1]*(invertHorizontal?-1:1),vertical=filtered[0]*(invertVertical?-1:1);const threshold=Math.max(0,Number(deadzone)||0);return {up:vertical<0&&Math.abs(vertical)>=threshold,down:vertical>0&&Math.abs(vertical)>=threshold,left:horizontal<0&&Math.abs(horizontal)>=threshold,right:horizontal>0&&Math.abs(horizontal)>=threshold,horizontal,vertical}}
+const api={gyroDirections,filterGyro,crc32,ds4BluetoothOutput,parseDS4,separateJoycons,axisSource};if(typeof module==='object'&&module.exports)module.exports=api;root.SignalInput=api;
 })(typeof globalThis==='object'?globalThis:this);
