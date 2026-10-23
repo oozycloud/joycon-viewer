@@ -22,3 +22,8 @@ assert.deepEqual(filterGyro([2,0,0],3),[0,0,0],'custom threshold');
 assert.deepEqual(filterGyro([.01,0,0],0),[.01,0,0],'zero disables deadzone without rescaling');
 const original=[.3,.4,0];filterGyro(original,1);assert.deepEqual(original,[.3,.4,0],'raw source preserved');
 console.log('PASS: Ryujinx vector deadzone below/at threshold, multi-axis magnitude, custom threshold and immutable raw samples');
+
+const {accelAngles,motionDirection}=require('../input-core.js');
+const neutral=accelAngles([0,0,1]);
+for(const [accel,expected,label]of [[[0,-.5,1],0,'up'],[[-.5,0,1],90,'right'],[[0,.5,1],180,'down'],[[.5,0,1],-90,'left'],[[-.5,-.5,1],45,'up right'],[[.5,.5,1],-135,'down left']]){const d=motionDirection(accel,neutral);assert.equal(d.active,true,label+' appears');assert.ok(Math.abs(d.angle-expected)<.0001,label+' correct direction')}
+assert.equal(motionDirection([0,0,1],neutral).active,false,'neutral hidden');assert.equal(motionDirection([-.02,0,1],neutral).active,false,'small tilt below three degrees hidden');const shifted=[-.5,.4,1];assert.equal(motionDirection(shifted,accelAngles(shifted)).active,false,'recenter defines new neutral');console.log('PASS: motion arrow up/down/left/right/diagonals, neutral threshold, recenter');
