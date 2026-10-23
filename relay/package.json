@@ -1,0 +1,8 @@
+{
+  "name": "signal-local-relay",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Optional local input relay for SIGNAL and OBS",
+  "scripts": {"start": "node server.cjs"},
+  "dependencies": {"ws": "^8.18.3"}
+}
