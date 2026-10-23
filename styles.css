@@ -48,3 +48,6 @@ body{background:#141617}header{height:74px;border:0;padding:0 38px;position:rela
 .zelda40-edition .zelda40-foil-sheen{animation:zelda40-foil-pass 14s ease-in-out infinite;pointer-events:none}.joycon2.zelda40-edition .stick-well[cx="145"],.joycon2.zelda40-edition .stick-well[cx="355"]{fill:url(#zelda40-goldfoil)}
 @keyframes zelda40-foil-pass{0%{transform:translateX(0)}100%{transform:translateX(680px)}}
 @media(prefers-reduced-motion:reduce){.zelda40-edition .zelda40-foil-sheen{animation:none;transform:translateX(310px)}}
+
+/* Edition and decal features temporarily unavailable. */
+label:has(#edition),#edition-note,details:has(#decal),.edition-art,.decals{display:none!important}
