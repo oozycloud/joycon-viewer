@@ -12,3 +12,13 @@ const payload=ds4BluetoothOutput();assert.equal(payload.length,77);assert.equal(
 const ps4={index:0,id:'Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 09cc)',axes:[.2,-.3,.8,-.7]};const extra={index:1,id:'Xbox',axes:[-.9,.9]};assert.equal(separateJoycons(ps4,extra),false);const ps4Route=axisSource(ps4,extra,false);assert.equal(ps4Route.right,ps4);assert.equal(ps4Route.x,'rx');assert.equal(ps4.axes[2],.8);assert.equal(ps4.axes[3],-.7);
 const left={index:2,id:'Joy-Con (L)'},right={index:3,id:'Joy-Con (R)'};assert.equal(separateJoycons(left,right),true);assert.deepEqual(axisSource(left,right,true),{right,x:'prx',y:'pry'});assert.equal(separateJoycons(left,left),false);
 console.log('PASS: signed USB/BT IMU offsets, minimal rejection, nominal units, CRC, PS4 same-device sticks, separate Joy-Con routing');
+
+const {filterGyro}=require('../input-core.js');
+assert.deepEqual(filterGyro([.9,0,0]),[0,0,0],'under default threshold zeros all axes');
+assert.deepEqual(filterGyro([1,0,0]),[1,0,0],'at threshold unchanged');
+assert.deepEqual(filterGyro([.6,.6,.6]),[.6,.6,.6],'vector magnitude above one keeps every axis despite each axis below one');
+assert.deepEqual(filterGyro([-.3,.4,0]),[0,0,0],'under threshold diagonal zeros entire vector');
+assert.deepEqual(filterGyro([2,0,0],3),[0,0,0],'custom threshold');
+assert.deepEqual(filterGyro([.01,0,0],0),[.01,0,0],'zero disables deadzone without rescaling');
+const original=[.3,.4,0];filterGyro(original,1);assert.deepEqual(original,[.3,.4,0],'raw source preserved');
+console.log('PASS: Ryujinx vector deadzone below/at threshold, multi-axis magnitude, custom threshold and immutable raw samples');
