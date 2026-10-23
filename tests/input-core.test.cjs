@@ -25,8 +25,18 @@ console.log('PASS: Ryujinx vector deadzone below/at threshold, multi-axis magnit
 
 const {gyroDirections}=require('../input-core.js');
 for(const [gyro,name]of [[[2,0,0],'down'],[[-2,0,0],'up'],[[0,2,0],'right'],[[0,-2,0],'left']]){const d=gyroDirections(gyro);assert.equal(d[name],true,name+' signed gyro activates');assert.equal(['up','down','left','right'].filter(k=>d[k]).length,1)}
-assert.equal(gyroDirections([.9,0,0]).down,false,'inside threshold inactive');assert.equal(gyroDirections([1,0,0]).down,true,'at threshold active');assert.equal(gyroDirections([0,0,20]).down,false,'roll-only no pointing');assert.equal(gyroDirections([0,0,20]).right,false,'roll-only no yaw');assert.equal(gyroDirections([.8,.8,0]).down,false,'whole vector passes but each pointing axis still below deadzone');assert.equal(gyroDirections([2,2,0]).down&&gyroDirections([2,2,0]).right,true,'diagonal adjacent arrows');assert.equal(gyroDirections([2,2,0],1,true,true).up&&gyroDirections([2,2,0],1,true,true).left,true,'inverted both axes');
+assert.equal(gyroDirections([.9,0,0]).down,false,'inside threshold inactive');assert.equal(gyroDirections([1,0,0]).down,true,'at threshold active');assert.equal(gyroDirections([0,0,20]).down,false,'roll-only no pointing');assert.equal(gyroDirections([0,0,20]).right,false,'roll-only no yaw');assert.equal(gyroDirections([.8,.8,0]).down,false,'whole vector passes but each pointing axis still below deadzone');assert.equal(gyroDirections([2,2,0]).down,true,'equal axes prefer vertical');assert.equal(gyroDirections([2,2,0]).right,false,'no diagonal');assert.equal(gyroDirections([2,3,0]).right,true,'dominant horizontal');assert.equal(gyroDirections([2,2,0],1,true,true).up,true,'inverted dominant vertical');for(const x of [-4,-2,0,2,4])for(const y of [-4,-2,0,2,4]){const d=gyroDirections([x,y,0]);assert.ok(['up','down','left','right'].filter(k=>d[k]).length<=1,'at most one cardinal arrow')}
 for(const sign of [-1,1]){const v=new DataView(new ArrayBuffer(63));v.setInt16(12,sign*164,true);const sample=parseDS4(1,v);const d=gyroDirections(sample.gyro);assert.equal(sign<0?d.up:d.down,true,'USB signed pitch reaches directional render state')}
 assert.equal(Object.values(gyroDirections([0,0,0])).filter(v=>v===true).length,0,'rest clears all');console.log('PASS: gyro D-pad signed pitch/yaw, USB down/up fixtures, deadzone, diagonals, roll-only, inversion and rest');
 
 for(const sign of [-1,1]){assert.equal(gyroDirections([59*sign,0,0],60)[sign<0?'up':'down'],false,'large threshold 59 inactive');assert.equal(gyroDirections([60*sign,0,0],60)[sign<0?'up':'down'],true,'large threshold 60 active');assert.equal(gyroDirections([100*sign,0,0],60)[sign<0?'up':'down'],true,'deliberate 100 up/down active')};console.log('PASS: large motion deadzone signed 59 inactive, 60 threshold and 100 active');
+
+const {motionHold}=require('../input-core.js');
+let held=motionHold({direction:null,until:0},'up',100,true);
+assert.deepEqual(held,{direction:'up',until:900});
+assert.deepEqual(motionHold(held,'left',899,true),held,'lock suppresses other directions for full 800ms');
+assert.deepEqual(motionHold(held,'up',500,true),held,'same direction does not extend locked duration');
+assert.deepEqual(motionHold(held,'left',900,true),{direction:'left',until:1700},'new direction allowed exactly at expiry');
+assert.deepEqual(motionHold(held,null,900,true),{direction:null,until:0},'neutral clears at expiry');
+assert.deepEqual(motionHold(held,'right',200,false),{direction:'right',until:1000},'unlocked switches immediately');
+console.log('PASS: exact 800ms hold, lock suppression, expiry and toggle-off switching');
