@@ -17,6 +17,10 @@ Choose **Switch Pro** in Settings for the dedicated original Nintendo Switch Pro
 
 **Controller editions:** Tears of the Kingdom Pro/Joy-Con, Skyward Sword HD Joy-Con, Splatoon 3 Pro/Joy-Con, and Zelda 40th Anniversary Joy-Con 2 are custom-drawn recreations referenced against Nintendo's product photography. The shell geometry, buttons and sticks remain native SVG. Detailed markings are traced into flat-colour vector artwork; product photographs are not used as controller backgrounds. These are reference-based recreations, not original factory texture files or pixel-perfect reproductions. Joy-Con 2 adaptations of older finishes are explicitly labeled custom.
 
+**Reference fitting:** Original Joy-Con button/stick positions are calibrated to the front-view reference and shared across every Switch 1 skin. Joy-Con 2 uses its own model proportions. TOTK uses a fine procedural grain on the gold finish while printed rings remain smooth. **White & gold · Joy-Con** is a custom finish from the user-provided reference, with white controls and black press feedback; it is not presented as an official Nintendo edition.
+
+**Black rail attachments (Switch 1)** optionally adds the rigid inner wrist-strap bars to every original Joy-Con finish, without cords. The option is saved and shared with settings. It does not affect Pro or Joy-Con 2 layouts; the central motion arrow scales to stay clear of the bars.
+
 Choose **Standard / custom paint** for editable SVG shell colors, including independent Pro shell and grips. The Joy-Con 2 standard layout changes accent colors while retaining dark shells. **Reset colours** restores palette defaults without changing input settings. Advanced custom decals support built-in patterns or bounded PNG/JPEG/WebP uploads; image settings save locally and transfer through JSON. Large custom images may exceed the shared URL limit.
 
 Reference source URLs are listed in [assets/editions/CREDITS.md](assets/editions/CREDITS.md). Nintendo owns the source product photography and related game artwork. No reference photographs need to load at runtime.
