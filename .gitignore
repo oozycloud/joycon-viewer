@@ -1,2 +1,7 @@
 node_modules/
 .DS_Store
+assets/editions/*.png
+assets/editions/*.jpg
+assets/editions/*.webp
+edition-photos.js
+edition-photo-clips.js

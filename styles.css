@@ -50,4 +50,10 @@ body{background:#141617}header{height:74px;border:0;padding:0 38px;position:rela
 @media(prefers-reduced-motion:reduce){.zelda40-edition .zelda40-foil-sheen{animation:none;transform:translateX(310px)}}
 
 /* Edition and decal features temporarily unavailable. */
-label:has(#edition),#edition-note,details:has(#decal),.edition-art,.decals{display:none!important}
+
+
+/* Product-photo surfaces retain the fine edition paint; SVG caps remain live. */
+.photo-controller .photo-surface{isolation:isolate}.photo-controller .button:not(.pressed){fill:transparent;stroke:none;filter:none}.photo-controller .button-label{fill:transparent}.photo-controller .button.pressed+.button-label{fill:#14191b}.photo-controller .photo-stick-well{fill:#101719;stroke:#11191d;stroke-width:1}.photo-controller .stick{fill:url(#photo-rubber);stroke:#10171b;stroke-width:1.4}.photo-controller .photo-grip-rim{fill:none;stroke:#687579;stroke-width:1;pointer-events:none}.photo-controller .photo-grip-inner{fill:#0001;stroke:#131e23;stroke-width:1;pointer-events:none}.photo-controller .stick.pressed{fill:#f5f5f2;stroke:#b8bdbf;transform:translateY(2px) scale(.94)}.photo-controller .detached-trigger:not(.pressed){fill:#2d3336;stroke:#11181b;stroke-width:1}.photo-controller .trigger-label{fill:#b8c1c3;font-size:10px;letter-spacing:1px}.photo-controller .photo-rail-button:not(.pressed){fill:#141c1f;stroke:#536166;stroke-width:.6}.photo-controller .shoulder.pressed{transform:translate(0,0) scale(1)}
+
+/* Native custom surfaces: source motifs are flat SVG contours, never photographs. */
+.edition-art{pointer-events:none}.zelda40-edition .zelda40-foil-sheen{animation:none;display:none}
