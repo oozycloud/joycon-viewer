@@ -5,3 +5,4 @@ assets/editions/*.jpg
 assets/editions/*.webp
 edition-photos.js
 edition-photo-clips.js
+supabase/.temp/

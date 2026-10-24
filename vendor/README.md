@@ -1,0 +1,7 @@
+# Vendored Supabase browser client
+
+Official `@supabase/supabase-js` 2.118.0 UMD browser bundle, copied unchanged from the npm release tarball. MIT license: supabase-js-LICENSE.txt. No runtime CDN dependency.
+
+Source: https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.118.0.tgz
+
+SHA-256: ee3be8de192b97cb1d73d1e95d6b82bb1f6b658c0f97c4ef757fc331996ed3d3

@@ -91,3 +91,40 @@ The static frontend needs no install/build step. No controller input leaves the 
 ## Capturing while OBS is unfocused
 
 The viewer includes a timer fallback when the animation loop pauses. For a PS4 controller, use **Connect PS4 / motion** in Chrome/Edge: full USB/Bluetooth HID reports feed buttons, sticks and motion directly, independent of Gamepad API focus. Keep this sending browser open and use the included WebSocket relay to receive in OBS. This does not override browser suspension, OS device exclusivity, or OBS source shutdown. In OBS Browser Source properties, disable **Shutdown source when not visible** and **Refresh browser source when scene becomes active** when continuity is needed.
+
+
+## Visual design studio
+
+Settings → **Open visual design editor** opens a draft for the currently displayed layout. Draw and Erase work on the shell; Fill floods a connected area and stops at existing ink and shell edges. Hardware is hidden while painting. Turn on **Show controls while painting** to preview the result, or use **Select controls** to tap a button, shoulder, trigger, or stick and choose its normal and pressed colors. The control dropdown also offers **All controls**. Pressed preview shows those colors without requiring a controller.
+
+Undo/redo, Clear paint, and Reset control colors affect the draft. **Cancel** or Escape discards it. **Apply design** commits it and switches to Standard / custom paint. Each layout keeps its own artwork and control colors; editing Plain white preserves white caps with black presses until overridden. Applying an edited Splatoon finish converts it into your custom design. The selectable finishes remain Standard / custom paint, Plain white, and Splatoon 3 Joy-Con; other bundled reference artwork is disabled.
+
+Advanced artwork & decals offers live shell-clipped patterns or PNG/JPEG/WebP uploads with color and opacity. These are enabled for the canonical layouts and remain beneath the hardware. Custom CSS remains independent.
+
+Designs are saved locally and included in JSON export/import and OBS/share URLs. Raster artwork can make a URL exceed the 24,000-character limit: the app explains this instead of copying an incomplete URL. Use JSON export/import in the target browser for larger designs. Artwork uses bounded PNG data; imported layouts, colors, image headers, and dimensions are validated, and arbitrary SVG/HTML is not accepted. Browser storage can fill up, so export important work. Each editable artwork layer is limited to 900,000 characters, with 24 undo steps during a session.
+
+
+## Named PNG asset packs
+
+Open **Settings → PNG asset packs** and download the selected controller's ZIP. It includes transparent 2× PNG crops, `manifest.json` with native placement bounds and dimensions, and a README. Names include `base left.png`, `base right.png` (or `base.png` for Pro/generic), `button a.png`, `button a pressed.png`, `joystick left.png`, and `joystick left socket.png`. Moving joystick caps and fixed sockets are separate. Button files include their symbols; base files exclude hardware. Re-export uses your current replacement images.
+
+Extract the ZIP, edit the PNGs while keeping names and dimensions, then drop any or all **PNG files** into the import field. ZIP/README/manifest files are not imported. Matching is case-insensitive; `clicked` is accepted as an alias for `pressed`. Review the concrete preview and matched list before Apply. Missing files keep their existing visuals. Dimension mismatches require explicit scaling confirmation. Cancel leaves all settings unchanged; invalid or duplicate batches apply nothing.
+
+Replacements are saved per layout, included in JSON settings, and rendered in OBS. Actual input selects normal/pressed files; moving caps follow stick axes while sockets remain fixed. Reset imported parts restores native visuals and your editor artwork. Storage-quota failure cancels Apply rather than claiming the parts were saved. Limits: 120 files and 8 MB per batch, 2 MB per PNG, 2048 px maximum image dimensions. Large packs generally need JSON transfer because share/OBS URLs retain the 24,000-character size guard.
+
+
+## Supabase accounts
+
+The frontend remains a static GitHub Pages app. `auth-config.js` contains only the public Supabase project URL and publishable key; no service key or password belongs in any frontend file. The official Supabase JS 2.118.0 browser bundle is vendored locally with its MIT license. Sessions stay in memory in the current tab, so reload/closing the tab requires signing in again. Password verification and password hashes are handled by Supabase Auth; passwords and session tokens never enter controller settings, JSON exports, OBS URLs, or cloud configuration. Use HTTPS and protect this page from untrusted scripts; memory-only sessions do not make XSS harmless.
+
+On first sign-in, explicitly choose **Save current browser design to account** or **Load existing account design**. No design is silently overwritten. After choosing, design/settings/editor/PNG changes autosave after a short debounce. Failed requests remain **Not synced** with Retry. Signing out or switching accounts cancels queued work and requires a new choice. Relay connection/device-index preferences remain local. Private named presets support save, load, rename, and confirmed delete; loading a preset is an explicit replacement of the current local design. The public directory lists verified registered usernames, creator flag and join date only, with the server-assigned creator pinned first; it is not a score ranking.
+
+### Backend provisioning
+
+1. Apply `supabase/migrations/20261024180541_viewer_accounts.sql` to an empty project. It enables RLS, owner-only private state/presets, private profile reads, a UUID/email-free public directory, and a limited public `list_public_users` RPC. Usernames are unique lowercase 3–24-character handles. Regular registration cannot claim the reserved creator name.
+2. Enable email/password Auth, email confirmation, production SMTP and suitable Auth rate limits. Add the actual GitHub Pages URL and local preview URL to Supabase Auth **Site URL / Redirect URLs** before testing confirmation/password recovery links. Supabase's default mailer has restricted delivery/rate limits; configure SMTP for public registration. A successful API response does not prove the email arrived.
+3. Set the public URL/publishable key in `auth-config.js`. Deploy `supabase/functions/username-login` with JWT verification disabled and its pinned `deno.json` import map; the function authenticates username/password through Supabase Auth. Runtime service credentials stay inside Supabase. Set `VIEWER_ALLOWED_ORIGINS` to the actual site origin (the source also permits the documented local/GitHub origins). Enable `usernameLogin` only after deployment. Email login works independently.
+4. Creator assignment is trusted-server-only. After creating the real confirmed Auth account, a trusted operator can insert its profile if it predates the Auth trigger and call `private.assign_viewer_creator(the_real_uuid)`. The function is not executable by browser roles. A trusted bootstrap creation of the reserved handle requires `app_metadata.viewer_creator_bootstrap=true`; user-editable metadata never assigns creator privileges. Never put an account password into migration/provisioning files.
+5. Run `supabase/tests/accounts_rls.sql` with two existing test-profile UUIDs supplied through the documented transaction settings. Also test with real anonymous/authenticated API requests. The script rolls back its fixtures. Run Supabase security advisors and enable leaked-password protection where the project plan supports it.
+
+`accounts-core.test.cjs` uses a clearly labeled mock service to test choice gating, owner/race isolation and retry behavior; it is not a substitute for real Auth/RLS testing. Test email delivery, recovery redirects, and account creation against the configured project before publishing. Cloud config and presets are bounded JSON; large PNG packs may exceed database/request limits, in which case the UI keeps local work and reports an unsynced request.
