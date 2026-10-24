@@ -128,3 +128,11 @@ On first sign-in, explicitly choose **Save current browser design to account** o
 5. Run `supabase/tests/accounts_rls.sql` with two existing test-profile UUIDs supplied through the documented transaction settings. Also test with real anonymous/authenticated API requests. The script rolls back its fixtures. Run Supabase security advisors and enable leaked-password protection where the project plan supports it.
 
 `accounts-core.test.cjs` uses a clearly labeled mock service to test choice gating, owner/race isolation and retry behavior; it is not a substitute for real Auth/RLS testing. Test email delivery, recovery redirects, and account creation against the configured project before publishing. Cloud config and presets are bounded JSON; large PNG packs may exceed database/request limits, in which case the UI keeps local work and reports an unsynced request.
+
+### Share links and OBS artwork
+
+Copy URL and OBS overlay include the selected controller layout and its artwork. Small settings remain in the URL; larger PNG designs use a permanent, read-only cloud snapshot. Sign in before creating a large design link. Recipients and OBS do not need an account. Links keep the design as it was when copied; create a new link after editing.
+
+Anyone with the opaque share link can view its design, CSS, and any explicitly included relay connection settings. Links contain no account password or session token. Shared previews load separately from the recipient’s saved local design and never autosave into their account. A missing or invalid snapshot displays an error instead of silently loading a different design. Keep JSON exports as your editable backup.
+
+Backend setup also requires `supabase/migrations/20261024184518_design_shares.sql`. The private snapshot table has no anonymous table access; an exact 256-bit read-only token is required by the lookup RPC. Creation requires a signed-in account and is capped at 16 MB per snapshot, 256 distinct snapshots and 200 MB per account. Identical snapshots reuse a token, and links have no automatic expiry.
